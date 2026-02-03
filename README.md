@@ -34,7 +34,6 @@ flutter run
 
 3. **Usar Controles Rápidos**:
    - Clique nos botões de peso rápido (20kg, 40kg, etc.)
-   - Use o slider para valores intermediários
    - Digite manualmente para máxima precisão
 
 ## 🏋️ Exemplo de Uso
@@ -124,7 +123,6 @@ flutter build windows --release
 
 - O app assume uma barra padrão de 20kg
 - Todas as contas são feitas para um lado da barra (o outro lado é idêntico)
-- O algoritmo usa um sistema guloso para calcular as melhores combinações de anilhas
 - Há uma margem de erro de 0.01kg para cálculos em ponto flutuante
 
 ## 🤝 Contribuições
