@@ -1,0 +1,35 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+*.iml
+pubspec.lock
+.pub/
+build/
+.gradle/
+.android/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.project
+*.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Web
+web/flutter_service_worker.js
+
+# Coverage
+coverage/
+lcov.report
+
+# Misc
+*.log
+*.pyc
+*.sqlite
