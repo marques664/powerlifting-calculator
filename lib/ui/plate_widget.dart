@@ -17,7 +17,10 @@ class _PlateWidgetState extends State<PlateWidget> {
   @override
   Widget build(BuildContext context) {
     // Passa useCollars ao calculatePlates
-    final plates = PlateCalculator.calculatePlates(_selectedWeight, useCollars: _useCollars);
+    final plates = PlateCalculator.calculatePlates(
+      _selectedWeight,
+      useCollars: _useCollars,
+    );
 
     return SingleChildScrollView(
       child: Column(

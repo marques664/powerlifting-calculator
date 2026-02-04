@@ -14,6 +14,21 @@ class BarVisual extends StatelessWidget {
     required this.useCollars,
   });
 
+  /// Formata o peso com até 2 casas decimais quando necessário, sem arredondar
+  String _formatWeight(double weight) {
+    if (weight == weight.toInt()) {
+      // Se é um inteiro, mostra sem casas decimais
+      return weight.toInt().toString();
+    }
+    // Formata com 2 casas decimais e remove zeros desnecessários do final
+    String formatted = weight.toStringAsFixed(2);
+    // Remove o zero final se existir (ex: 1.20 -> 1.2)
+    if (formatted.endsWith('0') && formatted.contains('.')) {
+      formatted = formatted.substring(0, formatted.length - 1);
+    }
+    return formatted;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -40,85 +55,91 @@ class BarVisual extends StatelessWidget {
   Widget _buildBarVisualization() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Presilha de competição (se ativada)
-            if (useCollars)
-              Container(
-                width: 15,
-                height: 32,
-                margin: const EdgeInsets.symmetric(horizontal: 1),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1A1A1A), // Preto mais escuro
-                  borderRadius: BorderRadius.circular(3),
-                  border: Border.all(color: Colors.white10, width: 0.5),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black45,
-                      blurRadius: 2,
-                      offset: const Offset(0.5, 0.5),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Card(
+          color: const Color(0xFF2A2A2A),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Presilha de competição (se ativada)
+                if (useCollars)
+                  Container(
+                    width: 15,
+                    height: 32,
+                    margin: const EdgeInsets.symmetric(horizontal: 1),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1A1A1A), // Preto mais escuro
+                      borderRadius: BorderRadius.circular(3),
+                      border: Border.all(color: Colors.white10, width: 0.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black45,
+                          blurRadius: 2,
+                          offset: const Offset(0.5, 0.5),
+                        ),
+                      ],
                     ),
-                  ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Bolinha cinza clara
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[400], // Cinza claro
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        // Texto do peso
+                        const Text(
+                          '2.5',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                // Lado esquerdo da barra com anilhas
+                ..._buildPlatesStack(),
+                // Barra central
+                Container(
+                  width: 15,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF6B6B6B),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Bolinha cinza clara
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400], // Cinza claro
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    // Texto do peso
-                    const Text(
-                      '2.5',
+                Container(
+                  width: 80,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    color: Color(0xB0A9A9A9),
+                  ),
+                  child: Center(
+                    child: Text(
+                      useCollars ? '25kg' : '20kg',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 5,
+                        fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-                  ],
-                ),
-              ),
-            // Lado esquerdo da barra com anilhas
-            ..._buildPlatesStack(),
-            // Barra central
-            Container(
-              width: 15,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Color(0xB03F3F3F),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Container(
-              width: 80,
-              height: 18,
-              decoration: BoxDecoration(
-                color: Color(0xB0A9A9A9),
-              ),
-              child: Center(
-                child: Text(
-                  useCollars ? '25kg' : '20kg',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8,
-                    fontWeight: FontWeight.bold,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -169,15 +190,15 @@ class BarVisual extends StatelessWidget {
           ),
         ],
       ),
-      child: Center(
-        child: RotatedBox(
-          quarterTurns: 1,
-          child: Text(
-            weight.toStringAsFixed(1),
-            style: TextStyle(
-              color: weight == 5.0 ? Colors.black : Colors.white,
-              fontSize: 6,
-              fontWeight: FontWeight.bold,
+        child: Center(
+          child: RotatedBox(
+            quarterTurns: 1,
+            child: Text(
+              _formatWeight(weight),
+              style: TextStyle(
+                color: weight == 5.0 ? Colors.black : Colors.white,
+                fontSize: 6,
+                fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
           ),
@@ -191,17 +212,17 @@ class BarVisual extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Card(
-          color: Colors.red[50],
+          color: const Color(0xFF3A1F1F),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                Icon(Icons.warning_amber_rounded, color: Colors.red[700], size: 32),
+                Icon(Icons.warning_amber_rounded, color: Colors.red[300], size: 32),
                 const SizedBox(height: 8),
                 Text(
                   'Peso inválido!',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.red[700],
+                        color: Colors.red[300],
                         fontWeight: FontWeight.bold,
                       ),
                 ),
@@ -209,7 +230,7 @@ class BarVisual extends StatelessWidget {
                 Text(
                   'Não é possível montar este peso com as anilhas disponíveis.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.red[700],
+                        color: Colors.red[300],
                       ),
                   textAlign: TextAlign.center,
                 ),
@@ -221,104 +242,88 @@ class BarVisual extends StatelessWidget {
     }
 
     final totalPerSide = PlateCalculator.calculateTotalWeight(plates);
-    final barTotalWeight = useCollars ? PlateCalculator.barWeight + PlateCalculator.collarWeight : PlateCalculator.barWeight;
+    final barTotalWeight = useCollars ? PlateCalculator.barWeight + (PlateCalculator.collarWeight * 2) : PlateCalculator.barWeight;
     final totalWeight = barTotalWeight + (totalPerSide * 2);
     final difference = (totalWeight - this.totalWeight).abs();
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Anilhas por lado:',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 12),
-            ...plates.map((plate) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: Color(PlateCalculator.getPlateHexColor(plate.weight)),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.black26),
-                      ),
+    return SafeArea(
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Anilhas por lado:',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(width: 12),
-                    Text(
-                      '${plate.weight.toStringAsFixed(1)}kg',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    const Spacer(),
-                    Text(
-                      'x${plate.quantity}',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-            const SizedBox(height: 12),
-            Divider(color: Colors.grey[400]),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Total por lado:',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                Text(
-                  '${totalPerSide.toStringAsFixed(1)}kg',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Peso total montado:',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[700],
-                      ),
-                ),
-                Text(
-                  '${totalWeight.toStringAsFixed(1)}kg',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: difference > 0.01 ? Colors.orange[700] : Colors.green[700],
-                      ),
-                ),
-              ],
-            ),
-            if (difference > 0.01)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  'Diferença: ${difference.toStringAsFixed(2)}kg',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.orange[700],
-                      ),
-                ),
               ),
-          ],
+              const SizedBox(height: 12),
+              ...plates.map((plate) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: Color(PlateCalculator.getPlateHexColor(plate.weight)),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.black26),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        '${_formatWeight(plate.weight)}kg',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const Spacer(),
+                      Text(
+                        'x${plate.quantity}',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              const SizedBox(height: 12),
+              Divider(color: Colors.grey[700]),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total por lado:',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  Text(
+                    '${totalPerSide.toStringAsFixed(2)}kg',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              if (difference > 0.01)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Diferença: ${difference.toStringAsFixed(2)}kg',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.amber[400],
+                        ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

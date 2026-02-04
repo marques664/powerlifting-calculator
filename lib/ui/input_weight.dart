@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class InputWeight extends StatefulWidget {
-  final Function(double, bool) onWeightChanged; // Agora recebe peso E presilhas
+  final Function(double, bool) onWeightChanged; // Recebe peso E presilhas
 
   const InputWeight({
     super.key,
@@ -44,12 +43,19 @@ class _InputWeightState extends State<InputWeight> {
     });
   }
 
-  /// Formata o peso com até 1 casa decimal, removendo .0 se for inteiro
+  /// Formata o peso com até 2 casas decimais quando necessário, removendo zeros desnecessários
   String _formatWeight(double weight) {
     if (weight == weight.toInt()) {
+      // Se é um inteiro, mostra sem casas decimais
       return weight.toInt().toString();
     }
-    return weight.toStringAsFixed(1);
+    // Formata com 2 casas decimais e remove zeros desnecessários do final
+    String formatted = weight.toStringAsFixed(2);
+    // Remove o zero final se existir (ex: 1.20 -> 1.2)
+    if (formatted.endsWith('0') && formatted.contains('.')) {
+      formatted = formatted.substring(0, formatted.length - 1);
+    }
+    return formatted;
   }
 
   @override
@@ -70,28 +76,21 @@ class _InputWeightState extends State<InputWeight> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    keyboardType:  TextInputType.numberWithOptions(decimal: true, signed: false),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d*[.,]?\d*$'),
-                      ),
-                    ],
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
                       suffixText: 'kg',
                       hintText: 'Ex: 152,5 ou 160',
-                      helperText: 'Incrementos de 0,5kg (aceita vírgula ou ponto)',
+                      helperText: 'Ou use os botões abaixo',
                       helperMaxLines: 2,
                     ),
                     onChanged: (value) {
                       if (value.isEmpty) {
-                        // Campo vazio, não atualiza
                         return;
                       }
                       try {
-                        // Substitui vírgula por ponto para aceitar ambos os separadores
                         String normalizedValue = value.replaceAll(',', '.');
                         double weight = double.parse(normalizedValue);
                         if (weight >= 0) {
@@ -105,10 +104,68 @@ class _InputWeightState extends State<InputWeight> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            // Botões de ajuste fino
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Botão -2.5
+                ElevatedButton(
+                  onPressed: () => _updateWeight(_currentWeight - 2.5),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  child: const Text(
+                    '-2,5',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Botão -0.5
+                ElevatedButton(
+                  onPressed: () => _updateWeight(_currentWeight - 0.5),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  child: const Text(
+                    '-0,5',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Botão +0.5
+                ElevatedButton(
+                  onPressed: () => _updateWeight(_currentWeight + 0.5),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  child: const Text(
+                    '+0,5',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Botão +2.5
+                ElevatedButton(
+                  onPressed: () => _updateWeight(_currentWeight + 2.5),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[300],
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  ),
+                  child: const Text(
+                    '+2,5',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
             // Toggle para presilhas de competição
             Card(
-              color: _useCollars ? Colors.red[50] : Colors.blue[50],
+              color: _useCollars ? const Color(0xFF3A1F1F) : const Color(0xFF2A2A2A),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -118,18 +175,18 @@ class _InputWeightState extends State<InputWeight> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _useCollars ? 'Modo Competição' : 'Modo Academia',
+                            _useCollars ? 'Com presilhas' : 'Sem presilhas',
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: _useCollars ? Colors.red[700] : Colors.blue[700],
+                                  color: _useCollars ? Colors.red[300] : Colors.grey[300],
                                 ),
                           ),
                           Text(
                             _useCollars
-                                ? 'Barra: 20kg + 2 presilhas (2×2,5kg) = 25kg'
+                                ? 'Barra: 20kg + 2 presilhas = 25kg'
                                 : 'Barra: 20kg (sem presilhas)',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.grey[600],
+                                  color: Colors.grey[500],
                                 ),
                           ),
                         ],
@@ -137,7 +194,7 @@ class _InputWeightState extends State<InputWeight> {
                     ),
                     Switch(
                       value: _useCollars,
-                      activeThumbColor: Colors.red[700],
+                      activeThumbColor: Colors.red[400],
                       onChanged: (value) {
                         setState(() {
                           _useCollars = value;
@@ -159,7 +216,7 @@ class _InputWeightState extends State<InputWeight> {
                 children: [
                   _buildQuickButton(75),
                   const SizedBox(width: 8),
-                  _buildQuickButton(125),
+                  _buildQuickButton(127.5),
                   const SizedBox(width: 8),
                   _buildQuickButton(175),
                   const SizedBox(width: 8),

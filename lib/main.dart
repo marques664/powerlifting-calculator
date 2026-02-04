@@ -12,9 +12,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Powerlifting Calculator',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-        useMaterial3: true,
+      theme: ThemeData.dark(useMaterial3: true).copyWith(
+        colorScheme: ColorScheme.dark(
+          primary: Colors.red[700]!, // Vermelho escuro
+          onPrimary: Colors.white,
+          secondary: Colors.amber[700]!, // Âmbar para destaques
+          onSecondary: Colors.white,
+          surface: const Color(0xFF383838), // Superfícies escuras
+          onSurface: Colors.white,
+          error: Colors.red[400]!,
+        ),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        cardColor: const Color(0xFF1E1E1E),
+        appBarTheme: AppBarTheme(
+          backgroundColor: const Color(0xFF1A1A1A),
+          foregroundColor: Colors.white,
+          elevation: 2,
+        ),
       ),
       home: const MyHomePage(title: 'Montador de barras'),
     );
@@ -35,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: const PlateWidget(),
