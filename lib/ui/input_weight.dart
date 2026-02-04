@@ -60,177 +60,179 @@ class _InputWeightState extends State<InputWeight> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Text(
-              'Peso desejado',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: false),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+    return SafeArea(
+      child: Card(
+        margin: const EdgeInsets.all(16),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Text(
+                'Peso desejado',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        suffixText: 'kg',
+                        hintText: 'Ex: 152,5 ou 160',
+                        helperText: 'Ou use os botões abaixo',
+                        helperMaxLines: 2,
                       ),
-                      suffixText: 'kg',
-                      hintText: 'Ex: 152,5 ou 160',
-                      helperText: 'Ou use os botões abaixo',
-                      helperMaxLines: 2,
-                    ),
-                    onChanged: (value) {
-                      if (value.isEmpty) {
-                        return;
-                      }
-                      try {
-                        String normalizedValue = value.replaceAll(',', '.');
-                        double weight = double.parse(normalizedValue);
-                        if (weight >= 0) {
-                          _updateWeight(weight);
-                        }
-                      } catch (e) {
-                        // Valor inválido, ignora
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Botões de ajuste fino
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Botão -2.5
-                ElevatedButton(
-                  onPressed: () => _updateWeight(_currentWeight - 2.5),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  child: const Text(
-                    '-2,5',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Botão -0.5
-                ElevatedButton(
-                  onPressed: () => _updateWeight(_currentWeight - 0.5),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  child: const Text(
-                    '-0,5',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Botão +0.5
-                ElevatedButton(
-                  onPressed: () => _updateWeight(_currentWeight + 0.5),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  child: const Text(
-                    '+0,5',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Botão +2.5
-                ElevatedButton(
-                  onPressed: () => _updateWeight(_currentWeight + 2.5),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[300],
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  ),
-                  child: const Text(
-                    '+2,5',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            // Toggle para presilhas de competição
-            Card(
-              color: _useCollars ? const Color(0xFF3A1F1F) : const Color(0xFF2A2A2A),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _useCollars ? 'Com presilhas' : 'Sem presilhas',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: _useCollars ? Colors.red[300] : Colors.grey[300],
-                                ),
-                          ),
-                          Text(
-                            _useCollars
-                                ? 'Barra: 20kg + 2 presilhas = 25kg'
-                                : 'Barra: 20kg (sem presilhas)',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.grey[500],
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Switch(
-                      value: _useCollars,
-                      activeThumbColor: Colors.red[400],
                       onChanged: (value) {
-                        setState(() {
-                          _useCollars = value;
-                          // Notifica a mudança de presilhas
-                          widget.onWeightChanged(_currentWeight, _useCollars);
-                        });
+                        if (value.isEmpty) {
+                          return;
+                        }
+                        try {
+                          String normalizedValue = value.replaceAll(',', '.');
+                          double weight = double.parse(normalizedValue);
+                          if (weight >= 0) {
+                            _updateWeight(weight);
+                          }
+                        } catch (e) {
+                          // Valor inválido, ignora
+                        }
                       },
                     ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Botões de ajuste fino
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Botão -2.5
+                  ElevatedButton(
+                    onPressed: () => _updateWeight(_currentWeight - 2.5),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[300],
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    child: const Text(
+                      '-2,5',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Botão -0.5
+                  ElevatedButton(
+                    onPressed: () => _updateWeight(_currentWeight - 0.5),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[300],
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    child: const Text(
+                      '-0,5',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Botão +0.5
+                  ElevatedButton(
+                    onPressed: () => _updateWeight(_currentWeight + 0.5),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[300],
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    child: const Text(
+                      '+0,5',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Botão +2.5
+                  ElevatedButton(
+                    onPressed: () => _updateWeight(_currentWeight + 2.5),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[300],
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    child: const Text(
+                      '+2,5',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Toggle para presilhas de competição
+              Card(
+                color: _useCollars ? const Color(0xFF3A1F1F) : const Color(0xFF2A2A2A),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _useCollars ? 'Com presilhas' : 'Sem presilhas',
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: _useCollars ? Colors.red[300] : Colors.grey[300],
+                                  ),
+                            ),
+                            Text(
+                              _useCollars
+                                  ? 'Barra: 20kg + 2 presilhas = 25kg'
+                                  : 'Barra: 20kg (sem presilhas)',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey[500],
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        value: _useCollars,
+                        activeThumbColor: Colors.red[400],
+                        onChanged: (value) {
+                          setState(() {
+                            _useCollars = value;
+                            // Notifica a mudança de presilhas
+                            widget.onWeightChanged(_currentWeight, _useCollars);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Botões rápidos com padding
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildQuickButton(75),
+                    const SizedBox(width: 8),
+                    _buildQuickButton(125),
+                    const SizedBox(width: 8),
+                    _buildQuickButton(175),
+                    const SizedBox(width: 8),
+                    _buildQuickButton(200),
+                    const SizedBox(width: 8),
+                    _buildQuickButton(225),
+                    const SizedBox(width: 8),
+                    _buildQuickButton(275),
+                    const SizedBox(width: 8),
+                    _buildQuickButton(300),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Botões rápidos com padding
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildQuickButton(75),
-                  const SizedBox(width: 8),
-                  _buildQuickButton(127.5),
-                  const SizedBox(width: 8),
-                  _buildQuickButton(175),
-                  const SizedBox(width: 8),
-                  _buildQuickButton(200),
-                  const SizedBox(width: 8),
-                  _buildQuickButton(225),
-                  const SizedBox(width: 8),
-                  _buildQuickButton(275),
-                  const SizedBox(width: 8),
-                  _buildQuickButton(300),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

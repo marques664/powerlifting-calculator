@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pwl_calc/ui/plate_widget.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // fundo da status bar
+      statusBarIconBrightness: Brightness.light, // ícones claros
+      statusBarBrightness: Brightness.dark, // iOS
+    ),
+  );
+
   runApp(const MyApp());
 }
 
@@ -31,6 +42,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: const MyHomePage(title: 'Montador de barras'),
+
     );
   }
 }
@@ -48,9 +60,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /*
       appBar: AppBar(
-        title: Text(widget.title),
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
       ),
+
+       */
       body: const PlateWidget(),
     );
   }
