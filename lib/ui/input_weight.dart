@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 class InputWeight extends StatefulWidget {
   final Function(double, bool) onWeightChanged; // Recebe peso E presilhas
@@ -16,6 +17,7 @@ class _InputWeightState extends State<InputWeight> {
   final TextEditingController _controller = TextEditingController();
   double _currentWeight = 60.0;
   bool _useCollars = false; // Toggle para presilhas de competição
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -23,8 +25,10 @@ class _InputWeightState extends State<InputWeight> {
     _controller.text = _formatWeight(_currentWeight);
   }
 
+
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -88,18 +92,24 @@ class _InputWeightState extends State<InputWeight> {
                         helperMaxLines: 2,
                       ),
                       onChanged: (value) {
-                        if (value.isEmpty) {
-                          return;
-                        }
-                        try {
-                          String normalizedValue = value.replaceAll(',', '.');
-                          double weight = double.parse(normalizedValue);
-                          if (weight >= 0) {
-                            _updateWeight(weight);
+                        // Cancela o debounce anterior
+                        _debounce?.cancel();
+                        
+                        // Cria um novo timer de debounce
+                        _debounce = Timer(const Duration(milliseconds: 1000), () {
+                          if (value.isEmpty) {
+                            return;
                           }
-                        } catch (e) {
-                          // Valor inválido, ignora
-                        }
+                          try {
+                            String normalizedValue = value.replaceAll(',', '.');
+                            double weight = double.parse(normalizedValue);
+                            if (weight >= 0) {
+                              _updateWeight(weight);
+                            }
+                          } catch (e) {
+                            // Valor inválido, ignora
+                          }
+                        });
                       },
                     ),
                   ),
