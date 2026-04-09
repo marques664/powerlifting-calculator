@@ -129,10 +129,6 @@ flutter build windows --release
 
 Sinta-se à vontade para sugerir melhorias ou reportar bugs!
 
-## 📄 Licença
-
-Este projeto é software livre para uso pessoal e em competições.
-
 ---
 
 **Desenvolvido para atletas que querem poupar tempo e evitar confusões na hora de montar a barra!** 💪
